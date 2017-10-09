@@ -1,6 +1,9 @@
 #!/bin/sh
 
-#set -x
+#
+# This is a script for monitoring sensors (temperature, fans and voltage) and 
+# overall health of IBM servers using SNMPv1 to the Integrated Management Module (IMM).
+#
 
 # Version 0.3 2017-10-09
 # Farid Joubbi farid@joubbi.se
