@@ -2,6 +2,15 @@
 
 #set -x
 
+# Version 0.3 2017-10-09
+# Farid Joubbi farid@joubbi.se
+# Added warning and critical level to temperature performance data.
+# Added label for performance data instead of just a number.
+# Added check for 0 in critical temperature.
+# Removed ofmaximum from fan speed output for nicer performance graphs.
+# Renamed offline to zero in performance data for fans.
+
+
 # Version 0.0.2 2010-08-24
 # Return 3 for unknown results.
 
@@ -137,12 +146,14 @@ temperature )
 		tempNoncritical=`get_temperature $i $tempNoncriticalOID`
 		RESULT="$RESULT$tempName = $tempTemp
 "
-		if test "$tempTemp" -ge "$tempCritical"; then
-			STATUS=2
-		elif test "$tempTemp" -ge "$tempNoncritical"; then
-			STATUS=1
+		if test "$tempCritical" -gt 0; then
+			if test "$tempTemp" -ge "$tempCritical"; then
+				STATUS=2
+			elif test "$tempTemp" -ge "$tempNoncritical"; then
+				STATUS=1
+			fi
 		fi
-		PERFDATA="${PERFDATA}Temperature$i=$tempTemp;;;; "
+		PERFDATA="${PERFDATA}'$tempName'=$tempTemp;$tempNoncritical;$tempCritical;; "
 	done
 	;;
 voltage )
@@ -168,7 +179,7 @@ voltage )
 			#echo "$voltVolt > $voltCritLow"
 			STATUS=2
 		fi
-		PERFDATA="${PERFDATA}Voltage$i=$voltVolt;;;; "
+		PERFDATA="${PERFDATA}'$voltName'=$voltVolt;;;; "
 	done
 	;;
 fans )
@@ -182,10 +193,11 @@ fans )
 	fi
 	for i in $fans; do
 		fanName=`get_fan $i $fanNameOID`
-		fanSpeed=`get_fan $i $fanSpeedOID|tr -d 'h '`
+		fanSpeed=`get_fan $i $fanSpeedOID|tr -d 'h '| sed -e 's/ofmaximum//g'`
 		RESULT="$RESULT$fanName = $fanSpeed
 "
-		PERFDATA="${PERFDATA}Fan$i=$fanSpeed;;;; "
+		fanSpeedPerf=`echo $fanSpeed | sed -e 's/offline/0/g'`
+		PERFDATA="${PERFDATA}'$fanName'=$fanSpeedPerf;;;; "
 	done
 	;;
 * )
