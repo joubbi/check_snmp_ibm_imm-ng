@@ -1,11 +1,11 @@
 # check_snmp_ibm_imm-ng
 
-This is a script for monitoring sensors (temperature, fans and voltage) and
-overall health of IBM servers using SNMPv1 to the Integrated Management Module (IMM).
+This is a script for monitoring sensors (temperature, fans and voltage) and overall health of IBM servers.
+The script uses SNMPv1 to communicate with the Integrated Management Module (IMM).
 
 
 The script was initially released by Ulric Eriksson.
-I have only made a few minor changes. Some of these changes were commented by others on the [Nagios Exchange](https://exchange.nagios.org/directory/Plugins/Hardware/Server-Hardware/IBM/check_snmp_ibm_imm-2Esh/details)
+I have only made a few minor changes. Some of these changes were suggested by other users as comments on the [Nagios Exchange](https://exchange.nagios.org/directory/Plugins/Hardware/Server-Hardware/IBM/check_snmp_ibm_imm-2Esh/details) for the original plugin by ulric.
 
 I have tested the script with Op5 Monitor. It should work with other Nagios compatible products as well.
 
@@ -42,7 +42,7 @@ CMOS Battery = 3136
 |'SysBrd 3.3V'=3308;;;; 'SysBrd 5V'=5039;;;; 'SysBrd 12V'=12150;;;; 'CMOS Battery'=3136;;;;
 ```
 ```
- ./check_snmp_ibm_imm-ng.sh -H hostname -C comminuty -T fans
+./check_snmp_ibm_imm-ng.sh -H hostname -C comminuty -T fans
 Fan 1A Tach = 46%
 Fan 1B Tach = 47%
 Fan 2A Tach = 45%
@@ -63,7 +63,7 @@ ___
 
 Licensed under the [__Apache License Version 2.0__](https://www.apache.org/licenses/LICENSE-2.0)
 
-Partially Written by __farid@joubbi.se__
+Partially written by __farid@joubbi.se__
 
 http://www.joubbi.se/monitoring.html
 
