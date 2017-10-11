@@ -5,6 +5,10 @@
 # overall health of IBM servers using SNMPv1 to the Integrated Management Module (IMM).
 #
 
+# Version 0.4 2017-10-11
+#Added a 5 second timeout to snmpwalk instead of the default of one.
+# Fixed a bug with the exit status for help.
+
 # Version 0.3 2017-10-09
 # Farid Joubbi farid@joubbi.se
 # Added warning and critical level to temperature performance data.
@@ -19,6 +23,8 @@
 
 # Version 0.0.1 2010-05-21
 # Ulric Eriksson <ulric.eriksson@dgc.se>
+
+SNMPWALK="/usr/bin/snmpwalk"
 
 BASEOID=.1.3.6.1.4
 IMMOID=$BASEOID.1.2.3.51.3
@@ -58,7 +64,6 @@ healthStatOID=$IMMOID.1.4
 usage()
 {
 	echo "Usage: $0 -H host -C community -T health|temperature|voltage|fans"
-	exit 0
 }
 
 get_health()
@@ -83,6 +88,7 @@ get_fan()
 
 if test "$1" = -h; then
 	usage
+        exit 0
 fi
 
 while getopts "H:C:T:" o; do
@@ -98,16 +104,19 @@ while getopts "H:C:T:" o; do
 		;;
 	* )
 		usage
+                exit 3
 		;;
 	esac
 done
 
-RESULT=
+SNMPOPTS=" -v 1 -c $COMMUNITY -On -t 5 $HOST"
+
+RESULT=''
 STATUS=0	# OK
 
 case "$TEST" in
 health )
-	HEALTH=`snmpwalk -v 1 -c $COMMUNITY -On $HOST $healthStatOID`
+	HEALTH=`$SNMPWALK $SNMPOPTS $healthStatOID`
 	healthStat=`get_health $healthStatOID`
 	case "$healthStat" in
 	0 )
@@ -124,6 +133,7 @@ health )
 		;;
 	255 )
 		RESULT="Health status: Normal"
+                STATUS=0
 		;;
 	* )
 		RESULT="Health status: Unknown"
@@ -132,7 +142,7 @@ health )
 	esac
 	;;
 temperature )
-	TEMP=`snmpwalk -v 1 -c $COMMUNITY -On $HOST $tempOID`
+	TEMP=`$SNMPWALK $SNMPOPTS $tempOID`
 	# Figure out which temperature indexes we have
 	temps=`echo "$TEMP"|
 	grep -F "$tempIndexOID."|
@@ -160,7 +170,7 @@ temperature )
 	done
 	;;
 voltage )
-	VOLT=`snmpwalk -v 1 -c $COMMUNITY -On $HOST $voltOID`
+	VOLT=`$SNMPWALK $SNMPOPTS $voltOID`
 	volts=`echo "$VOLT"|
 	grep -F "$voltIndexOID."|
 	sed -e 's,^.*: ,,'`
@@ -186,7 +196,7 @@ voltage )
 	done
 	;;
 fans )
-	FANS=`snmpwalk -v 1 -c $COMMUNITY -On $HOST $fanOID`
+	FANS=`$SNMPWALK $SNMPOPTS $fanOID`
 	fans=`echo "$FANS"|
 	grep -F "$fanIndexOID."|
 	sed -e 's,^.*: ,,'`
@@ -205,6 +215,7 @@ fans )
 	;;
 * )
 	usage
+        exit 3
 	;;
 esac
 
