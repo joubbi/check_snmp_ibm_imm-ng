@@ -9,6 +9,7 @@ I have only made a few minor changes. Some of these changes were suggested by ot
 
 I have tested the script with Op5 Monitor. It should work with other Nagios compatible products as well.
 
+Tested with System X3550 M4 and System X3650 M3. Should work with other models as well.
 
 ### Examples
 
