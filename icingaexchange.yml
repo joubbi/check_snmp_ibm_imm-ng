@@ -1,5 +1,5 @@
 name: check_snmp_ibm_imm-ng
-description: "file://README.md"
+description: "file:///README.md"
 url: "https://gitlab.com/faridj/check_snmp_ibm_imm-ng"
 tags: Hardware, IBM, IMM
 vendor: IBM
